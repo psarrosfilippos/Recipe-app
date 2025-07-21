@@ -3,25 +3,25 @@ import 'package:flutter/material.dart';
 import '../models/recipe.dart';
 import 'star_rating.dart';
 
-// Widget κάρτας που εμφανίζει τις βασικές πληροφορίες μιας συνταγής
+// Card widget that displays the basic information of a recipe
 class RecipeCard extends StatelessWidget {
-  final Recipe recipe; // Το αντικείμενο της συνταγής που θα εμφανιστεί
+  final Recipe recipe; // The recipe object to be displayed
   final VoidCallback?
-      onTap; // Συνάρτηση που εκτελείται όταν ο χρήστης πατήσει την κάρτα
+      onTap; // Function executed when the user taps the card
 
   const RecipeCard({super.key, required this.recipe, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    // Επιλογή κατάλληλης εικόνας (ή εικονιδίου) για την κάρτα
+    // Select appropriate image (or icon) for the card
     Widget imageWidget;
 
     if (recipe.imagePath.isEmpty) {
-      // Αν δεν υπάρχει εικόνα, εμφάνισε εικονίδιο placeholder
+      // If there is no image, show a placeholder icon
       imageWidget =
           const Icon(Icons.image_not_supported, size: 80, color: Colors.grey);
     } else if (recipe.imagePath.startsWith('/')) {
-      // Αν είναι αρχείο τοπικό (π.χ. από gallery)
+      // If it's a local file (e.g. from gallery)
       imageWidget = Image.file(
         File(recipe.imagePath),
         fit: BoxFit.cover,
@@ -29,7 +29,7 @@ class RecipeCard extends StatelessWidget {
         height: 100,
       );
     } else {
-      // Αν είναι asset από τον φάκελο assets
+      // If it's an asset from the assets folder
       imageWidget = Image.asset(
         recipe.imagePath,
         fit: BoxFit.cover,
@@ -39,19 +39,19 @@ class RecipeCard extends StatelessWidget {
     }
 
     return Hero(
-      // Χρησιμοποιείται για animation κατά τη μετάβαση στην οθόνη λεπτομερειών
+      // Used for transition animation to the detail screen
       tag: recipe.title,
       child: Card(
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         child: InkWell(
-          onTap: onTap, // Ενεργοποίηση onTap callback όταν πατιέται η κάρτα
+          onTap: onTap, // Trigger onTap callback when card is tapped
           borderRadius: BorderRadius.circular(16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Η εικόνα της συνταγής
+              // Recipe image
               ClipRRect(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
@@ -60,7 +60,7 @@ class RecipeCard extends StatelessWidget {
                 child: imageWidget,
               ),
               const SizedBox(width: 12),
-              // Οι πληροφορίες της συνταγής
+              // Recipe information
               Expanded(
                 child: Padding(
                   padding:
@@ -68,7 +68,7 @@ class RecipeCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Τίτλος της συνταγής
+                      // Recipe title
                       Text(
                         recipe.title,
                         style: const TextStyle(
@@ -77,12 +77,12 @@ class RecipeCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 6),
-                      // Δυσκολία
-                      Text('Δυσκολία: ${recipe.difficulty}'),
-                      // Χρόνος προετοιμασίας
-                      Text('Χρόνος: ${recipe.prepTime} λεπτά'),
+                      // Difficulty
+                      Text('Difficulty: ${recipe.difficulty}'),
+                      // Preparation time
+                      Text('Time: ${recipe.prepTime} minutes'),
                       const SizedBox(height: 6),
-                      // Βαθμολογία με αστέρια
+                      // Star rating
                       StarRating(rating: recipe.rating),
                     ],
                   ),
@@ -95,3 +95,4 @@ class RecipeCard extends StatelessWidget {
     );
   }
 }
+
