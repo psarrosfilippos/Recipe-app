@@ -1,4 +1,4 @@
-// Εισαγωγή των απαραίτητων πακέτων
+// Import required packages
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +9,7 @@ import 'add_recipe_screen.dart';
 import 'recipe_detail_screen.dart';
 import '../theme/theme_notifier.dart';
 
-// Κύρια οθόνη εμφάνισης των συνταγών
+// Main screen displaying the recipes
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -18,32 +18,32 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Recipe> recipes = []; // Λίστα με τις συνταγές
-  String sortOption = 'Χρόνος'; // Επιλογή ταξινόμησης (default: Χρόνος)
+  List<Recipe> recipes = []; // List of recipes
+  String sortOption = 'Χρόνος'; // Sorting option (default: Time)
 
   @override
   void initState() {
     super.initState();
-    final box = Hive.box<Recipe>('recipes'); // Άνοιγμα του Hive box
-    recipes = box.values.toList().cast<Recipe>(); // Ανάκτηση όλων των συνταγών
-    _sortRecipes(); // Αρχική ταξινόμηση
+    final box = Hive.box<Recipe>('recipes'); // Open the Hive box
+    recipes = box.values.toList().cast<Recipe>(); // Retrieve all recipes
+    _sortRecipes(); // Initial sorting
   }
 
-  // Πλοήγηση στην οθόνη προσθήκης νέας συνταγής
+  // Navigate to the add new recipe screen
   void _goToAddRecipe() async {
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const AddRecipeScreen()),
     );
 
-    // Μετά την επιστροφή, ανανέωση της λίστας
+    // After returning, refresh the list
     setState(() {
       recipes = Hive.box<Recipe>('recipes').values.toList().cast<Recipe>();
       _sortRecipes();
     });
   }
 
-  // Πλοήγηση στη σελίδα λεπτομερειών συνταγής
+  // Navigate to the recipe detail page
   void _goToRecipeDetail(Recipe recipe) {
     Navigator.push(
       context,
@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Ταξινόμηση συνταγών ανάλογα με την επιλεγμένη κατηγορία
+  // Sort recipes based on the selected category
   void _sortRecipes() {
     if (sortOption == 'Χρόνος') {
       recipes.sort((a, b) => a.prepTime.compareTo(b.prepTime));
@@ -70,21 +70,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final themeNotifier =
-        Provider.of<ThemeNotifier>(context); // Για αλλαγή θέματος
+        Provider.of<ThemeNotifier>(context); // For changing theme
 
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.orange,
         title: const Text(
-          'Οι Συνταγές μου',
+          'My Recipes',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
         actions: [
-          // Μενού επιλογής ταξινόμησης
+          // Sorting menu
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: PopupMenuButton<String>(
@@ -95,9 +95,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
               itemBuilder: (BuildContext context) => const [
-                PopupMenuItem(value: 'Χρόνος', child: Text('Χρόνος')),
-                PopupMenuItem(value: 'Βαθμολογία', child: Text('Βαθμολογία')),
-                PopupMenuItem(value: 'Δυσκολία', child: Text('Δυσκολία')),
+                PopupMenuItem(value: 'Χρόνος', child: Text('Time')),
+                PopupMenuItem(value: 'Βαθμολογία', child: Text('Rating')),
+                PopupMenuItem(value: 'Δυσκολία', child: Text('Difficulty')),
               ],
               child: Container(
                 padding:
@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // Κουμπί αλλαγής θέματος (φως/σκοτάδι)
+          // Theme switch button (light/dark)
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: Consumer<ThemeNotifier>(
@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
 
-      // Εμφάνιση της λίστας των συνταγών
+      // Display the list of recipes
       body: ListView.builder(
         itemCount: recipes.length,
         itemBuilder: (context, index) {
@@ -164,11 +164,11 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Icon(Icons.delete, color: Colors.white),
             ),
             direction:
-                DismissDirection.startToEnd, // Διαγραφή με swipe προς τα δεξιά
+                DismissDirection.startToEnd, // Delete with swipe to the right
             onDismissed: (direction) async {
               final deletedRecipe = recipe;
 
-              // Αφαίρεση από τη λίστα προσωρινά
+              // Temporarily remove from list
               setState(() {
                 recipes.removeAt(index);
               });
@@ -176,13 +176,13 @@ class _HomeScreenState extends State<HomeScreen> {
               final scaffold = ScaffoldMessenger.of(context);
               bool undoClicked = false;
 
-              // Εμφάνιση Snackbar με επιλογή αναίρεσης
+              // Show Snackbar with undo option
               scaffold.showSnackBar(
                 SnackBar(
-                  content: Text('Διαγράφηκε η συνταγή: ${deletedRecipe.title}'),
+                  content: Text('Recipe deleted: ${deletedRecipe.title}'),
                   duration: const Duration(seconds: 3),
                   action: SnackBarAction(
-                    label: 'ΑΝΑΙΡΕΣΗ',
+                    label: 'UNDO',
                     onPressed: () {
                       undoClicked = true;
                       setState(() {
@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
 
-              // Περιμένει να τελειώσει το snackbar και αν δεν πατήθηκε αναίρεση διαγράφει οριστικά
+              // Wait for snackbar to finish, delete permanently if undo not clicked
               await Future.delayed(const Duration(seconds: 3));
 
               if (!undoClicked) {
@@ -202,16 +202,16 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             },
 
-            // Πατώντας την κάρτα ανοίγουν οι λεπτομέρειες
+            // On card tap, open recipe details
             child: GestureDetector(
               onTap: () => _goToRecipeDetail(recipe),
-              child: RecipeCard(recipe: recipe), // Κάρτα εμφάνισης συνταγής
+              child: RecipeCard(recipe: recipe), // Recipe display card
             ),
           );
         },
       ),
 
-      // Κουμπί για προσθήκη νέας συνταγής
+      // Button to add new recipe
       floatingActionButton: FloatingActionButton(
         onPressed: _goToAddRecipe,
         child: const Icon(Icons.add),
