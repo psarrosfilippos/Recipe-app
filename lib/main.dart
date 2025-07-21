@@ -10,21 +10,21 @@ import 'theme/theme_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding
-      .ensureInitialized(); // Εξασφαλίζει ότι το Flutter περιβάλλον έχει αρχικοποιηθεί σωστά
+      .ensureInitialized(); // Ensures that the Flutter environment is properly initialized
 
-  await Hive.initFlutter(); // Αρχικοποιεί το Hive για Flutter
+  await Hive.initFlutter(); // Initializes Hive for Flutter
   Hive.registerAdapter(
-      RecipeAdapter()); // Καταχώρηση του adapter για το μοντέλο Recipe
+      RecipeAdapter()); // Registers the adapter for the Recipe model
   await Hive.openBox<Recipe>(
-      'recipes'); // Άνοιγμα του κουτιού (box) που περιέχει τις συνταγές
+      'recipes'); // Opens the box that contains the recipes
   await Hive.openBox(
-      'settings'); // Άνοιγμα του κουτιού για ρυθμίσεις (όπως θέμα κ.ά.)
+      'settings'); // Opens the box for settings (like theme, etc.)
 
-  // Εκκίνηση της εφαρμογής με πάροχο για την αλλαγή θέματος
+  // Starts the application with a provider for theme switching
   runApp(
     ChangeNotifierProvider(
       create: (_) =>
-          ThemeNotifier(), // Παροχή του ThemeNotifier σε ολόκληρη την εφαρμογή
+          ThemeNotifier(), // Provides the ThemeNotifier to the entire app
       child: const MyApp(),
     ),
   );
@@ -36,32 +36,32 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeNotifier =
-        Provider.of<ThemeNotifier>(context); // Πρόσβαση στο current theme
+        Provider.of<ThemeNotifier>(context); // Access to the current theme
 
     return MaterialApp(
-      title: 'Συνταγές Μαγειρικής',
-      debugShowCheckedModeBanner: false, // Απόκρυψη του debug banner
-      theme: AppTheme.light, // Θέμα φωτεινής λειτουργίας
-      darkTheme: AppTheme.dark, // Θέμα σκοτεινής λειτουργίας
+      title: 'Cooking Recipes',
+      debugShowCheckedModeBanner: false, // Hides the debug banner
+      theme: AppTheme.light, // Light mode theme
+      darkTheme: AppTheme.dark, // Dark mode theme
       themeMode: themeNotifier
-          .themeMode, // Επιλογή θέματος από τον χρήστη (light/dark/system)
+          .themeMode, // Theme selection by user (light/dark/system)
 
-      // Υποστήριξη ελληνικών και αγγλικών μεταφράσεων
+      // Support for Greek and English translations
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('el', ''), // Ελληνικά
-        Locale('en', ''), // Αγγλικά
+        Locale('el', ''), // Greek
+        Locale('en', ''), // English
       ],
 
-      // Ορισμός routes για την πλοήγηση
+      // Define routes for navigation
       routes: {
-        '/': (context) => const HomeScreen(), // Αρχική οθόνη
+        '/': (context) => const HomeScreen(), // Home screen
         '/add': (context) =>
-            const AddRecipeScreen(), // Οθόνη προσθήκης συνταγής
+            const AddRecipeScreen(), // Screen for adding a recipe
       },
     );
   }
