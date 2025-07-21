@@ -1,41 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-// Κλάση που διαχειρίζεται το θέμα της εφαρμογής και ειδοποιεί τα widgets όταν αλλάζει
+// Class that manages the app's theme and notifies widgets when it changes
 class ThemeNotifier extends ChangeNotifier {
-  // Το κλειδί που χρησιμοποιείται για την αποθήκευση της προτίμησης θέματος στη Hive
+  // The key used to store the theme preference in Hive
   static const _themeKey = 'themeMode';
 
-  // Η μεταβλητή που αποθηκεύει το τρέχον θέμα
+  // The variable that stores the current theme
   late ThemeMode _themeMode;
 
-  // Constructor που διαβάζει την αποθηκευμένη τιμή από τη Hive κατά την εκκίνηση
+  // Constructor that reads the saved value from Hive at startup
   ThemeNotifier() {
     final box = Hive.box('settings');
     final saved =
         box.get(_themeKey, defaultValue: 'system'); // default = system
     _themeMode =
-        _getThemeModeFromString(saved); // Μετατροπή string -> ThemeMode
+        _getThemeModeFromString(saved); // Convert string -> ThemeMode
   }
 
-  // Επιστρέφει το τρέχον ThemeMode
+  // Returns the current ThemeMode
   ThemeMode get themeMode => _themeMode;
 
-  // Boolean για να ελέγχει αν είναι ενεργοποιημένο το dark mode
+  // Boolean to check if dark mode is enabled
   bool get isDarkMode => _themeMode == ThemeMode.dark;
 
-  // Εναλλάσσει το θέμα και αποθηκεύει τη νέα προτίμηση
+  // Toggles the theme and stores the new preference
   void toggleTheme(bool isOn) {
     _themeMode = isOn ? ThemeMode.dark : ThemeMode.light;
 
-    // Αποθηκεύει την επιλογή του χρήστη στο Hive
+    // Stores the user's choice in Hive
     Hive.box('settings').put(_themeKey, _themeMode.name);
 
-    // Ειδοποιεί όλα τα widgets που κάνουν listen ότι το θέμα άλλαξε
+    // Notifies all listening widgets that the theme has changed
     notifyListeners();
   }
 
-  // Ιδιωτική μέθοδος που μετατρέπει string σε ThemeMode
+  // Private method that converts a string to ThemeMode
   ThemeMode _getThemeModeFromString(String value) {
     switch (value) {
       case 'light':
@@ -48,3 +48,4 @@ class ThemeNotifier extends ChangeNotifier {
     }
   }
 }
+
