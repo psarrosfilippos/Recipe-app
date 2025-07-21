@@ -61,5 +61,5 @@ informatics and telecommunications Student
 
 GitHub: psarrosfilipposp
 
-Recipe_app_report.pdf
+More about this project -> https://github.com/psarrosfilippos/Recipe-app/blob/7034aa2c99af3dde4c6e2cda4016ab38228384b1/Recipe_app_report.pdf
 [README.md](https://github.com/user-attachments/files/21339599/README.md)
