@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-// Widget που εμφανίζει αστέρια αξιολόγησης (1 έως 5)
-// Μπορεί να είναι είτε στατικό είτε διαδραστικό αν δοθεί συνάρτηση onRatingChanged
+// Widget that displays star ratings (1 to 5)
+// It can be either static or interactive if an onRatingChanged callback is provided
 class StarRating extends StatelessWidget {
-  final int rating; // Πόσα αστέρια είναι ενεργά (π.χ. 3 σημαίνει 3/5)
-  final double iconSize; // Μέγεθος των εικονιδίων (προεπιλογή 20.0)
+  final int rating; // How many stars are active (e.g. 3 means 3/5)
+  final double iconSize; // Size of the icons (default 20.0)
   final ValueChanged<int>?
-      onRatingChanged; // Callback όταν ο χρήστης αλλάζει τη βαθμολογία
+      onRatingChanged; // Callback when the user changes the rating
 
   const StarRating({
     super.key,
@@ -18,27 +18,28 @@ class StarRating extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisSize: MainAxisSize.min, // Χρήση του ελάχιστου δυνατού πλάτους
+      mainAxisSize: MainAxisSize.min, // Use the minimum possible width
       children: List.generate(5, (index) {
         return IconButton(
-          // Αν έχει δοθεί callback, ορίζουμε το onPressed
+          // If a callback is provided, set onPressed
           onPressed: onRatingChanged != null
               ? () => onRatingChanged!(
-                  index + 1) // Π.χ. πάτημα 3ου αστεριού = rating 3
-              : null, // Αν δεν είναι διαδραστικό, απενεργοποιούμε το onPressed
+                  index + 1) // E.g. tapping the 3rd star = rating 3
+              : null, // If not interactive, disable onPressed
           icon: Icon(
             index < rating
                 ? Icons.star
-                : Icons.star_border, // Συμπληρωμένο ή κενό αστέρι
+                : Icons.star_border, // Filled or empty star
             color:
-                index < rating ? Colors.amber : Colors.grey, // Κίτρινο ή γκρι
-            size: iconSize, // Μέγεθος από το πεδίο iconSize
+                index < rating ? Colors.amber : Colors.grey, // Yellow or gray
+            size: iconSize, // Size from iconSize field
           ),
-          padding: EdgeInsets.zero, // Αφαίρεση padding για πιο συμπαγή εμφάνιση
+          padding: EdgeInsets.zero, // Remove padding for compact display
           constraints:
-              const BoxConstraints(), // Αφαίρεση περιθωρίων του IconButton
+              const BoxConstraints(), // Remove IconButton margins
         );
       }),
     );
   }
 }
+
