@@ -1,41 +1,41 @@
-// Εισάγεται το πακέτο Hive για local αποθήκευση δεδομένων
+// Import the Hive package for local data storage
 import 'package:hive/hive.dart';
 
-// Αυτό το αρχείο πρέπει να δημιουργηθεί αυτόματα με το Hive code generator
+// This file must be generated automatically using the Hive code generator
 part 'recipe.g.dart';
 
-// Ορίζεται ότι η κλάση Recipe είναι τύπος που μπορεί να αποθηκευτεί στο Hive
+// Declares that the Recipe class is a type that can be stored in Hive
 @HiveType(typeId: 0)
 class Recipe extends HiveObject {
-  // Τίτλος της συνταγής
+  // Title of the recipe
   @HiveField(0)
   String title;
 
-  // Περιγραφή της συνταγής
+  // Description of the recipe
   @HiveField(1)
   String description;
 
-  // Χρόνος προετοιμασίας σε λεπτά
+  // Preparation time in minutes
   @HiveField(2)
   int prepTime;
 
-  // Δυσκολία εκτέλεσης (π.χ. Εύκολη, Μέτρια, Δύσκολη)
+  // Difficulty level (e.g., Easy, Medium, Hard)
   @HiveField(3)
   String difficulty;
 
-  // Μονοπάτι/URL εικόνας της συνταγής
+  // Image path/URL of the recipe
   @HiveField(4)
   String imagePath;
 
-  // Βαθμολογία της συνταγής (π.χ. από 1 έως 5)
+  // Recipe rating (e.g., from 1 to 5)
   @HiveField(5)
   int rating;
 
-  // Συστατικά της συνταγής σε μορφή κειμένου
+  // Ingredients of the recipe in text form
   @HiveField(6)
   String ingredients;
 
-  // Κατασκευαστής της κλάσης Recipe με όλα τα απαιτούμενα πεδία
+  // Constructor of the Recipe class with all required fields
   Recipe({
     required this.title,
     required this.description,
