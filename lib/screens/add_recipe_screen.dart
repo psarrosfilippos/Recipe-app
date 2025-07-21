@@ -1,15 +1,15 @@
-// Εισαγωγή απαραίτητων πακέτων
+// Import necessary packages
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-// Εισαγωγή του μοντέλου Recipe και του widget αξιολόγησης με αστέρια
+// Import the Recipe model and the star rating widget
 import '../models/recipe.dart';
 import '../widgets/star_rating.dart';
 
-// Οθόνη για την προσθήκη νέας συνταγής
+// Screen for adding a new recipe
 class AddRecipeScreen extends StatefulWidget {
   const AddRecipeScreen({super.key});
 
@@ -18,39 +18,39 @@ class AddRecipeScreen extends StatefulWidget {
 }
 
 class _AddRecipeScreenState extends State<AddRecipeScreen> {
-  // Κλειδί για τη φόρμα ώστε να μπορούμε να κάνουμε validate και save
+  // Key for the form to allow validation and saving
   final _formKey = GlobalKey<FormState>();
 
-  // Μεταβλητές για τα πεδία της συνταγής
+  // Variables for the recipe fields
   String title = '';
   String description = '';
   int prepTime = 0;
-  String difficulty = 'Εύκολη';
+  String difficulty = 'Easy';
   String imagePath = '';
   int rating = 0;
   String ingredients = '';
 
-  // Αρχείο εικόνας που επιλέγει ο χρήστης
+  // Image file selected by the user
   XFile? selectedImage;
 
-  // Ενημερώνει τη βαθμολογία και την αντίστοιχη δυσκολία
+  // Updates the rating and corresponding difficulty
   void _updateDifficulty(int newRating) {
     setState(() {
       rating = newRating;
       if (rating <= 3) {
-        difficulty = 'Εύκολη';
+        difficulty = 'Easy';
       } else if (rating == 4) {
-        difficulty = 'Μέτρια';
+        difficulty = 'Medium';
       } else {
-        difficulty = 'Δύσκολη';
+        difficulty = 'Hard';
       }
     });
   }
 
-  // Επιλογή εικόνας από τη συλλογή
+  // Pick image from gallery
   Future<void> _pickImage() async {
     final status =
-        await Permission.photos.request(); // Ζητείται άδεια πρόσβασης
+        await Permission.photos.request(); // Request access permission
     if (status.isGranted) {
       final picker = ImagePicker();
       final image = await picker.pickImage(source: ImageSource.gallery);
@@ -61,14 +61,14 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         });
       }
     } else {
-      // Εμφάνιση μηνύματος αν δεν δόθηκε άδεια
+      // Show message if permission was denied
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Η πρόσβαση στη συλλογή απορρίφθηκε')),
+        const SnackBar(content: Text('Access to gallery was denied')),
       );
     }
   }
 
-  // Αποθήκευση της συνταγής στο Hive box
+  // Save the recipe to the Hive box
   void _saveRecipe() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -83,69 +83,69 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         ingredients: ingredients,
       );
 
-      // Άνοιγμα του Hive box και αποθήκευση
+      // Open the Hive box and save
       final box = Hive.box<Recipe>('recipes');
       await box.add(newRecipe);
 
-      // Επιστροφή στην προηγούμενη οθόνη
+      // Go back to the previous screen
       Navigator.pop(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Στυλ για τα πεδία εισαγωγής
+    // Input field styles
     final inputBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(color: Colors.grey.shade400),
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Προσθήκη Συνταγής')),
+      appBar: AppBar(title: const Text('Add Recipe')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              // Πεδία φόρμας για τον τίτλο
+              // Form field for the title
               TextFormField(
                 decoration:
-                    InputDecoration(labelText: 'Τίτλος', border: inputBorder),
+                    InputDecoration(labelText: 'Title', border: inputBorder),
                 validator: (value) =>
-                    value!.isEmpty ? 'Συμπλήρωσε τον τίτλο' : null,
+                    value!.isEmpty ? 'Please enter a title' : null,
                 onSaved: (value) => title = value!,
               ),
               const SizedBox(height: 12),
 
-              // Περιγραφή
+              // Description
               TextFormField(
                 decoration: InputDecoration(
-                    labelText: 'Περιγραφή', border: inputBorder),
+                    labelText: 'Description', border: inputBorder),
                 maxLines: 3,
                 validator: (value) =>
-                    value!.isEmpty ? 'Συμπλήρωσε την περιγραφή' : null,
+                    value!.isEmpty ? 'Please enter a description' : null,
                 onSaved: (value) => description = value!,
               ),
               const SizedBox(height: 12),
 
-              // Χρόνος προετοιμασίας
+              // Preparation time
               TextFormField(
                 decoration: InputDecoration(
-                    labelText: 'Χρόνος (σε λεπτά)', border: inputBorder),
+                    labelText: 'Time (in minutes)', border: inputBorder),
                 keyboardType: TextInputType.number,
                 validator: (value) =>
-                    value!.isEmpty ? 'Συμπλήρωσε τον χρόνο' : null,
+                    value!.isEmpty ? 'Please enter the time' : null,
                 onSaved: (value) => prepTime = int.parse(value!),
               ),
               const SizedBox(height: 12),
 
-              // Επιλογή δυσκολίας
+              // Difficulty selection
               DropdownButtonFormField<String>(
                 decoration:
-                    InputDecoration(labelText: 'Δυσκολία', border: inputBorder),
+                    InputDecoration(labelText: 'Difficulty', border: inputBorder),
                 value: difficulty,
-                items: ['Εύκολη', 'Μέτρια', 'Δύσκολη']
+                items: ['Easy', 'Medium', 'Hard']
                     .map((level) =>
                         DropdownMenuItem(value: level, child: Text(level)))
                     .toList(),
@@ -153,14 +153,14 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Κουμπί επιλογής εικόνας
+              // Image selection button
               ElevatedButton.icon(
                 onPressed: _pickImage,
                 icon: const Icon(Icons.photo),
-                label: const Text('Επιλογή φωτογραφίας'),
+                label: const Text('Pick a photo'),
               ),
 
-              // Προεπισκόπηση εικόνας αν έχει επιλεγεί
+              // Image preview if selected
               if (selectedImage != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 12),
@@ -171,26 +171,26 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 ),
               const SizedBox(height: 16),
 
-              // Επιλογή βαθμολογίας με αστέρια
-              const Text('Βαθμολογία:'),
+              // Star rating
+              const Text('Rating:'),
               StarRating(
                 rating: rating,
                 onRatingChanged: _updateDifficulty,
               ),
               const SizedBox(height: 12),
 
-              // Υλικά συνταγής
+              // Recipe ingredients
               TextFormField(
                 decoration:
-                    InputDecoration(labelText: 'Υλικά', border: inputBorder),
+                    InputDecoration(labelText: 'Ingredients', border: inputBorder),
                 maxLines: 4,
                 validator: (value) =>
-                    value!.isEmpty ? 'Συμπλήρωσε τα υλικά' : null,
+                    value!.isEmpty ? 'Please enter the ingredients' : null,
                 onSaved: (value) => ingredients = value!,
               ),
               const SizedBox(height: 24),
 
-              // Κουμπί αποθήκευσης
+              // Save button
               ElevatedButton(
                 onPressed: _saveRecipe,
                 style: ElevatedButton.styleFrom(
@@ -199,7 +199,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Αποθήκευση'),
+                child: const Text('Save'),
               ),
             ],
           ),
